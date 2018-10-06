@@ -19,12 +19,15 @@
                Namespace="http://schemas.microsoft.com/developer/msbuild/2003"
                XPath="dotnetnuke/packages/package/@version"
                XmlFileName="..\$(DNNFileName).dnn" Value="$(Version)"/>
-    <Message Text="MSBUILD: Starting packaging for version $(Version)." Importance="high"></Message>  
-           
+    <Message Text="MSBUILD: Starting packaging for version $(Version)." Importance="high"></Message>      
+    <Copy DestinationFolder="..\Store_Install" SourceFiles="..\$(DNNFileName).dnn" />
     <CreateItem Include="$(MSBuildProjectDirectory)\..\Store_Install\**\*.*">
       <Output TaskParameter="Include" ItemName="ResourcesContent" />
     </CreateItem>
-    <Copy DestinationFolder="..\Store_Install" SourceFiles="..\$(DNNFileName).dnn" />
+    <CreateItem Include="$(MSBuildProjectDirectory)\..\Store_Install\**\*.resx">
+      <Output TaskParameter="Include" ItemName="ResourceFiles" />
+    </CreateItem>
+    <FileUpdate Files="@(ResourceFiles)" Encoding="utf-8" Regex=" " ReplacementText=" " />
     <Sleep Milliseconds="2000" />
     <Zip Files="@(ResourcesContent)" WorkingDirectory="$(MSBuildProjectDirectory)\..\Store_Install" ZipFileName="$(DNNFileName)_$(Version)_Install.zip" />
     <Copy DestinationFolder="..\Install" SourceFiles="$(DNNFileName)_$(Version)_Install.zip" />
