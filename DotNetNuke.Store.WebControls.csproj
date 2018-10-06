@@ -52,14 +52,16 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DotNetNuke, Version=4.6.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\bin\DotNetNuke.dll</HintPath>
+    <Reference Include="CountryListBox">
+      <HintPath>NugetPackages\Libraries\CountryListBox.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="DotNetNuke.Web.Client, Version=7.4.2.216, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\bin\DotNetNuke.Web.Client.dll</HintPath>
+    <Reference Include="DotNetNuke">
+      <HintPath>packages\DotNetNuke.Core.8.0.4.226\lib\net40\DotNetNuke.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="DotNetNuke.Web.Client">
+      <HintPath>packages\DotNetNuke.Web.Client.8.0.4.226\lib\net40\DotNetNuke.Web.Client.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -453,8 +455,9 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="API\DotNetNuke.Store.API.csproj">
-      <Project>{94D573AA-A168-480E-8C3F-F4D766410349}</Project>
+      <Project>{94d573aa-a168-480e-8c3f-f4d766410349}</Project>
       <Name>DotNetNuke.Store.API</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="Core\DotNetNuke.Store.Core.csproj">
       <Project>{2c181a6f-faeb-4a42-9032-5f37c39af980}</Project>
