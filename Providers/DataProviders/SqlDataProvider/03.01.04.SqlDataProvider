@@ -1,8 +1,8 @@
-IF NOT EXISTS (SELECT sc.[id] FROM {databaseOwner}[sysobjects] so INNER JOIN {databaseOwner}[syscolumns] sc ON so.[id]=sc.[id] WHERE so.[name]=N'{objectQualifier}Store_Administration' AND sc.[name]=N'AllowCoupons')
+IF NOT EXISTS (SELECT sc.[object_id] FROM sys.objects so INNER JOIN sys.columns sc ON so.[object_id]=sc.[object_id] WHERE so.[name]=N'{objectQualifier}Store_Administration' AND sc.[name]=N'AllowCoupons')
 ALTER TABLE {databaseOwner}[{objectQualifier}Store_Administration] ADD AllowCoupons bit NOT NULL CONSTRAINT DF_{objectQualifier}Store_Administration_AllowCoupons DEFAULT (0);
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Administration_AddStoreInfo]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Administration_AddStoreInfo]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Administration_AddStoreInfo]
 GO
 
@@ -46,7 +46,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Store_Administration_AddStoreI
 		(@PortalID, @Name, @Description, @Keywords, @SEOFeature, @GatewayName, @GatewaySettings, @DefaultEmailAddress, @ShoppingCartPageID, @CreatedByUser, getdate(), @StorePageID, @CurrencySymbol, @PortalTemplates, @StyleSheet, @AuthorizeCancel, @InventoryManagement, @OutOfStock, @ProductsBehavior, @OrderRoleID, @CatalogRoleID, @SecureCookie, @CheckoutMode, @ImpersonatedUserID, @NoDelivery, @AllowVirtualProducts, @AvoidNegativeStock, @AllowCoupons, @TaxName, @ShippingName, @AddressName)
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Administration_GetStoreInfo]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Administration_GetStoreInfo]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Administration_GetStoreInfo]
 GO
 
@@ -59,7 +59,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Store_Administration_GetStoreI
 	WHERE	PortalID = @PortalID
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Administration_UpdateStoreInfo]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Administration_UpdateStoreInfo]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Administration_UpdateStoreInfo]
 GO
 
@@ -128,11 +128,11 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Store_Administration_UpdateSto
 	WHERE	PortalID = @PortalID
 GO
 
-IF NOT EXISTS (SELECT sc.[id] FROM {databaseOwner}[sysobjects] so INNER JOIN {databaseOwner}[syscolumns] sc ON so.[id]=sc.[id] WHERE so.[name]=N'{objectQualifier}Store_Orders' AND sc.[name]=N'CouponID')
+IF NOT EXISTS (SELECT sc.[object_id] FROM sys.objects so INNER JOIN sys.columns sc ON so.[object_id]=sc.[object_id] WHERE so.[name]=N'{objectQualifier}Store_Orders' AND sc.[name]=N'CouponID')
 ALTER TABLE {databaseOwner}[{objectQualifier}Store_Orders] ADD CouponID int NULL, Discount money NULL;
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Orders_CreateOrder]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Orders_CreateOrder]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Orders_CreateOrder]
 GO
 
@@ -194,7 +194,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Store_Orders_CreateOrder]
 	HAVING o.OrderID = @OrderID
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Orders_GetCustomerOrders]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Orders_GetCustomerOrders]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Orders_GetCustomerOrders]
 GO
 
@@ -240,7 +240,7 @@ AS
 	ORDER BY o.OrderDate DESC
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Orders_GetOrder]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Orders_GetOrder]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Orders_GetOrder]
 GO
 
@@ -284,7 +284,7 @@ AS
 		o.OrderID = @OrderID AND o.PortalID=@PortalID
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Orders_GetOrdersByStatusID]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Orders_GetOrdersByStatusID]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Orders_GetOrdersByStatusID]
 GO
 
@@ -330,7 +330,7 @@ AS
 	ORDER BY o.OrderDate DESC
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Orders_UpdateOrder]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Orders_UpdateOrder]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Orders_UpdateOrder]
 GO
 
@@ -367,7 +367,7 @@ AS
 	WHERE OrderID = @OrderID
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Orders_UpdateOrderDetails]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Orders_UpdateOrderDetails]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Orders_UpdateOrderDetails]
 GO
 
@@ -422,7 +422,9 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Store_Orders_UpdateOrderDetail
 		o.Discount
 	HAVING o.OrderID = @OrderID
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Orders_CountCouponUsage]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+	GO
+
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Orders_CountCouponUsage]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Orders_CountCouponUsage]
 GO
 
@@ -438,7 +440,7 @@ AS
 	WHERE o.PortalID = @PortalID AND o.UserID = @UserID AND o.CouponID = @CouponID AND o.OrderID <> @OrderID AND o.OrderIsPlaced = 1
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Orders_GetTotalOrdered]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Orders_GetTotalOrdered]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Orders_GetTotalOrdered]
 GO
 
@@ -460,7 +462,7 @@ AS
 		o.PortalID = @PortalID AND o.UserID = @UserID AND o.OrderIsPlaced = 1
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_CartItems_GetItem]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_CartItems_GetItem]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_CartItems_GetItem]
 GO
 
@@ -477,7 +479,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Store_CartItems_GetItem]
 	AND	ci.ItemID = @ItemID
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_CartItems_GetItems]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_CartItems_GetItems]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_CartItems_GetItems]
 GO
 
@@ -498,7 +500,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Store_CartItems_GetItems]
 	AND	ci.CartID = @CartID
 GO
 
-IF NOT EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Store_Coupons') AND OBJECTPROPERTY(id, N'IsTable') = 1)
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}{objectQualifier}Store_Coupons') AND OBJECTPROPERTY(object_id, N'IsTable') = 1)
 CREATE TABLE {databaseOwner}[{objectQualifier}Store_Coupons] (
 	CouponID int NOT NULL IDENTITY (1, 1),
 	PortalID int NOT NULL,
@@ -519,12 +521,12 @@ CREATE TABLE {databaseOwner}[{objectQualifier}Store_Coupons] (
 	)  ON [PRIMARY]
 GO
 
-IF NOT EXISTS (SELECT * FROM {databaseOwner}sysobjects WHERE id = object_id(N'{databaseOwner}{objectQualifier}Store_Coupons') AND OBJECTPROPERTY(id, N'IsPrimaryKey') = 1)
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}{objectQualifier}Store_Coupons') AND OBJECTPROPERTY(object_id, N'IsPrimaryKey') = 1)
 ALTER TABLE {databaseOwner}[{objectQualifier}Store_Coupons] ADD CONSTRAINT
 	PK_{objectQualifier}Store_Coupons PRIMARY KEY CLUSTERED (CouponID) ON [PRIMARY]
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Coupons_AddCoupon]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Coupons_AddCoupon]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Coupons_AddCoupon]
 GO
 
@@ -551,7 +553,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Store_Coupons_AddCoupon]
 		(@PortalID,@Code,@Description,@RuleType,@RuleAmount,@DiscountType,@DiscountPercentage,@DiscountAmount,@ApplyTo,@ItemID,@StartDate,@EndDate,@Validity,@UserID,GETDATE())
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Coupons_DeleteCoupon]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Coupons_DeleteCoupon]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Coupons_DeleteCoupon]
 GO
 
@@ -563,7 +565,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Store_Coupons_DeleteCoupon]
 	WHERE CouponID=@CouponID
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Coupons_GetAll]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Coupons_GetAll]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Coupons_GetAll]
 GO
 
@@ -576,7 +578,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Store_Coupons_GetAll]
 	WHERE PortalID = @PortalID
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Coupons_GetCoupon]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Coupons_GetCoupon]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Coupons_GetCoupon]
 GO
 
@@ -590,7 +592,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Store_Coupons_GetCoupon]
 	WHERE PortalID = @PortalID AND CouponID = @CouponID
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Coupons_GetCouponByCode]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Coupons_GetCouponByCode]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Coupons_GetCouponByCode]
 GO
 
@@ -604,7 +606,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Store_Coupons_GetCouponByCode]
 	WHERE PortalID = @PortalID AND Code = @CouponCode
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Coupons_UpdateCoupon]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Coupons_UpdateCoupon]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Coupons_UpdateCoupon]
 GO
 

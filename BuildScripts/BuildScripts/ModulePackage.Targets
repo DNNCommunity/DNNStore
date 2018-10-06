@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<!-- WARNING, WARNING, WARNING -->
+<!-- REMEMBER THAT IF YOU MODIFY THE TARGETS FILE YOU NEED TO CLOSE/OPEN THE PROJECT FOR THE CHANGES TO TAKE EFFECT -->
+
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\packages\MSBuildTasks.1.5.0.235\tools\MSBuild.Community.Tasks.Targets" />
+  <PropertyGroup>
+    <DNNFileName>DNN_Store</DNNFileName>
+  </PropertyGroup>     
+  <Target Name="PackageModule" Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <XmlRead Prefix="n"
+                    Namespace="http://schemas.microsoft.com/developer/msbuild/2003"
+                    XPath="dotnetnuke/packages/package[1]/@version"
+                    XmlFileName="..\$(DNNFileName).dnn">
+      <Output TaskParameter="Value" PropertyName="Version" />      
+    </XmlRead>
+    <XmlUpdate Prefix="n"
+               Namespace="http://schemas.microsoft.com/developer/msbuild/2003"
+               XPath="dotnetnuke/packages/package/@version"
+               XmlFileName="..\$(DNNFileName).dnn" Value="$(Version)"/>
+    <Message Text="MSBUILD: Starting packaging for version $(Version)." Importance="high"></Message>  
+           
+    <CreateItem Include="$(MSBuildProjectDirectory)\..\Store_Install\**\*.*">
+      <Output TaskParameter="Include" ItemName="ResourcesContent" />
+    </CreateItem>
+    <Copy DestinationFolder="..\Store_Install" SourceFiles="..\$(DNNFileName).dnn" />
+    <Zip Files="@(ResourcesContent)" WorkingDirectory="$(MSBuildProjectDirectory)\..\Store_Install" ZipFileName="$(DNNFileName)_$(Version)_Install.zip" />
+    <Copy DestinationFolder="..\Install" SourceFiles="$(DNNFileName)_$(Version)_Install.zip" />
+    <Delete Files="$(DNNFileName)_$(Version)_Install.zip" />
+  </Target>
+</Project>

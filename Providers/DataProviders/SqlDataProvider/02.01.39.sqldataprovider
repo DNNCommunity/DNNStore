@@ -1,6 +1,165 @@
-IF NOT EXISTS (SELECT sc.[object_id] FROM sys.objects so INNER JOIN sys.columns sc ON so.[object_id]=sc.[object_id] WHERE so.[name]=N'{objectQualifier}Store_Products' AND sc.[name]=N'Virtual')
+-- *** Add SEOName field ***
+IF NOT EXISTS (SELECT sc.[object_id] FROM sys.objects so INNER JOIN sys.columns sc ON so.[object_id]=sc.[object_id] WHERE so.[name]=N'{objectQualifier}Store_Categories' AND sc.[name]=N'SEOName')
 
-ALTER TABLE {databaseOwner}{objectQualifier}Store_Products ADD Virtual bit DEFAULT(0) NOT NULL, VirtualFileID int NULL, AllowedDownloads int NULL;
+ALTER TABLE {databaseOwner}{objectQualifier}Store_Categories ADD SEOName nvarchar(50) NULL;
+
+GO
+
+IF EXISTS (SELECT object_id FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Store_Categories_AddCategory]') and OBJECTPROPERTY([object_id], N'IsProcedure') = 1)
+
+DROP PROCEDURE {databaseOwner}{objectQualifier}Store_Categories_AddCategory
+
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Categories_AddCategory
+		@PortalID int,
+		@CategoryName nvarchar(50),
+		@SEOName nvarchar(50),
+		@CategoryKeywords nvarchar(1000),
+		@CategoryDescription nvarchar(500),
+		@Message ntext,
+		@Archived bit,
+		@CreatedByUser nvarchar(100),
+		@CreatedDate datetime,
+		@OrderID int,
+		@ParentCategoryID int
+	AS
+	SET NOCOUNT ON
+
+
+	IF @ParentCategoryID = -1
+	BEGIN
+		SET @ParentCategoryID = NULL
+	END
+
+	INSERT INTO {databaseOwner}{objectQualifier}Store_Categories
+		(PortalID, CategoryName, SEOName, CategoryKeywords, CategoryDescription, Message, Archived, CreatedByUser, CreatedDate, OrderID, ParentCategoryID)
+		VALUES
+		(@PortalID, @CategoryName, @SEOName, @CategoryKeywords, @CategoryDescription, @Message, @Archived, @CreatedByUser, @CreatedDate, @OrderID, @ParentCategoryID)
+	SELECT SCOPE_IDENTITY()
+
+GO
+
+IF EXISTS (SELECT object_id FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Store_Categories_GetAll]') and OBJECTPROPERTY([object_id], N'IsProcedure') = 1)
+
+DROP PROCEDURE {databaseOwner}{objectQualifier}Store_Categories_GetAll
+
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Categories_GetAll
+		@PortalID int,
+		@ParentCategoryID int = NULL
+	AS
+	SET NOCOUNT ON
+
+IF @ParentCategoryID = -3
+	BEGIN
+		SELECT CategoryID, PortalID, CategoryName, SEOName, CategoryKeywords, CategoryDescription, Message, Archived, CreatedByUser, CreatedDate, OrderID, ParentCategoryID
+		FROM {databaseOwner}{objectQualifier}Store_Categories
+		WHERE PortalID = @PortalID
+		ORDER BY ParentCategoryID
+	END
+ELSE
+	BEGIN
+		IF @ParentCategoryID = -2
+			BEGIN
+				SELECT Categories.CategoryID, Categories.PortalID, Categories.CategoryName, Categories.SEOName, Categories.CategoryKeywords, Categories.CategoryDescription, Categories.Message, Categories.Archived, Categories.CreatedByUser, Categories.CreatedDate, Categories.OrderID, Categories.ParentCategoryID, ISNULL(Parent.CategoryName, '-') AS ParentCategoryName
+				FROM {databaseOwner}{objectQualifier}Store_Categories AS Categories
+					LEFT OUTER JOIN {databaseOwner}{objectQualifier}Store_Categories AS Parent
+					ON Categories.ParentCategoryID = Parent.CategoryID
+				WHERE Categories.PortalID = @PortalID
+					AND Categories.ParentCategoryID IS NULL
+					AND Categories.Archived = 0
+					AND Categories.IsDeleted = 0
+				ORDER BY Categories.OrderID
+			END
+		ELSE IF @ParentCategoryID = -1
+			BEGIN
+				SELECT Categories.CategoryID, Categories.PortalID, Categories.CategoryName, Categories.SEOName, Categories.CategoryKeywords, Categories.CategoryDescription, Categories.Message, Categories.Archived, Categories.CreatedByUser, Categories.CreatedDate, Categories.OrderID, Categories.ParentCategoryID, ISNULL(Parent.CategoryName, '-') AS ParentCategoryName
+				FROM {databaseOwner}{objectQualifier}Store_Categories AS Categories
+					LEFT OUTER JOIN {databaseOwner}{objectQualifier}Store_Categories AS Parent
+					ON Categories.ParentCategoryID = Parent.CategoryID
+				WHERE Categories.PortalID = @PortalID
+					AND Categories.IsDeleted = 0
+				ORDER BY Categories.OrderID
+			END 
+		ELSE
+			BEGIN
+				SELECT Categories.CategoryID, Categories.PortalID, Categories.CategoryName, Categories.SEOName, Categories.CategoryKeywords, Categories.CategoryDescription, Categories.Message, Categories.Archived, Categories.CreatedByUser, Categories.CreatedDate, Categories.OrderID, Categories.ParentCategoryID, ISNULL(Parent.CategoryName, '-') AS ParentCategoryName
+				FROM {databaseOwner}{objectQualifier}Store_Categories AS Categories
+					LEFT OUTER JOIN {databaseOwner}{objectQualifier}Store_Categories AS Parent
+					ON Categories.ParentCategoryID = Parent.CategoryID
+				WHERE Categories.PortalID = @PortalID
+					AND Categories.ParentCategoryID = @ParentCategoryID
+					AND Categories.Archived = 0
+					AND Categories.IsDeleted = 0
+				ORDER BY Categories.OrderID
+			END
+	END
+
+GO
+
+IF EXISTS (SELECT object_id FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Store_Categories_GetCategory]') and OBJECTPROPERTY([object_id], N'IsProcedure') = 1)
+
+DROP PROCEDURE {databaseOwner}{objectQualifier}Store_Categories_GetCategory
+
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Categories_GetCategory
+		@CategoryID int
+	AS
+	SET NOCOUNT ON
+	SELECT Categories.CategoryID, Categories.PortalID, Categories.CategoryName, Categories.SEOName, Categories.CategoryKeywords, Categories.CategoryDescription, Categories.Message, Categories.Archived, Categories.CreatedByUser, Categories.CreatedDate, Categories.OrderID, Categories.ParentCategoryID, ISNULL(Parent.CategoryName,'-') AS ParentCategoryName
+	FROM {databaseOwner}{objectQualifier}Store_Categories AS Categories
+		LEFT OUTER JOIN {databaseOwner}{objectQualifier}Store_Categories AS Parent
+		ON Categories.ParentCategoryID = Parent.CategoryID
+	WHERE Categories.CategoryID = @CategoryID
+		AND Categories.IsDeleted = 0
+
+GO
+
+IF EXISTS (SELECT object_id FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Store_Categories_UpdateCategory]') and OBJECTPROPERTY([object_id], N'IsProcedure') = 1)
+
+DROP PROCEDURE {databaseOwner}{objectQualifier}Store_Categories_UpdateCategory
+
+GO
+
+CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Categories_UpdateCategory
+		@CategoryID int,
+		@CategoryName nvarchar(50),
+		@SEOName nvarchar(50),
+		@CategoryKeywords nvarchar(1000),
+		@CategoryDescription nvarchar(500),
+		@Message ntext,
+		@Archived bit,
+		@OrderID int,
+		@ParentCategoryID int
+	AS
+
+	SET NOCOUNT ON
+	IF @ParentCategoryID = -1
+		BEGIN
+			SET @ParentCategoryID = NULL
+		END
+
+	UPDATE {databaseOwner}{objectQualifier}Store_Categories SET 
+		CategoryName = @CategoryName,
+		SEOName = @SEOName,
+		CategoryKeywords = @CategoryKeywords,
+		CategoryDescription = @CategoryDescription,
+		Message = @Message,
+		Archived = @Archived,
+		OrderID = @OrderID,
+		ParentCategoryID = @ParentCategoryID
+	WHERE
+		CategoryID = @CategoryID
+
+GO
+
+-- *** Add SEOName field ***
+IF NOT EXISTS (SELECT sc.[object_id] FROM sys.objects so INNER JOIN sys.columns sc ON so.[object_id]=sc.[object_id] WHERE so.[name]=N'{objectQualifier}Store_Products' AND sc.[name]=N'SEOName')
+
+ALTER TABLE {databaseOwner}{objectQualifier}Store_Products ADD SEOName nvarchar(50) NULL;
 GO
 
 IF EXISTS (SELECT object_id FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Store_Products_AddProduct]') and OBJECTPROPERTY([object_id], N'IsProcedure') = 1)
@@ -37,17 +196,34 @@ CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Products_AddProduct
 		@HighThreshold int,
 		@DeliveryTime int,
 		@PurchasePrice money,
-		@RoleID int,
-		@Virtual bit,
-		@VirtualFileID int,
-		@AllowedDownloads int
+		@RoleID int
 	AS
 	SET NOCOUNT ON
 
+	IF @Weight < 0
+		BEGIN
+			SET @Weight = NULL
+		END
+
+	IF @SaleStartDate = '01/01/9999'
+		BEGIN
+			SET @SaleStartDate = NULL
+		END
+
+	IF @SaleEndDate = '01/01/9999'
+		BEGIN
+			SET @SaleEndDate = NULL
+		END
+
+	IF @SalePrice < 0
+		BEGIN
+			SET @SalePrice = NULL
+		END
+
 	INSERT INTO {databaseOwner}{objectQualifier}Store_Products
-		(PortalID, CategoryID, Manufacturer, ModelNumber, ModelName, SEOName, ProductImage, UnitCost, Keywords, Summary, [Description],Featured, Archived, CreatedByUser, CreatedDate, ProductWeight, ProductHeight, ProductLength, ProductWidth, SaleStartDate, SaleEndDate, SalePrice, StockQuantity, LowThreshold, HighThreshold, DeliveryTime, PurchasePrice, RoleID, Virtual, VirtualFileID, AllowedDownloads)
+		(PortalID, CategoryID, Manufacturer, ModelNumber, ModelName, SEOName, ProductImage, UnitCost, Keywords, Summary, [Description],Featured, Archived, CreatedByUser, CreatedDate, ProductWeight, ProductHeight, ProductLength, ProductWidth, SaleStartDate, SaleEndDate, SalePrice, StockQuantity, LowThreshold, HighThreshold, DeliveryTime, PurchasePrice, RoleID)
 		VALUES
-		(@PortalID, @CategoryID, @Manufacturer, @ModelNumber, @ModelName, @SEOName, @ProductImage, @UnitCost, @Keywords, @Summary, @Description, @Featured, @Archived, @CreatedByUser, @CreatedDate, @Weight, @Height, @Length, @Width, @SaleStartDate, @SaleEndDate, @SalePrice, @StockQuantity, @LowThreshold, @HighThreshold, @DeliveryTime, @PurchasePrice, @RoleID, @Virtual, @VirtualFileID, @AllowedDownloads)
+		(@PortalID, @CategoryID, @Manufacturer, @ModelNumber, @ModelName, @SEOName, @ProductImage, @UnitCost, @Keywords, @Summary, @Description, @Featured, @Archived, @CreatedByUser, @CreatedDate, @Weight, @Height, @Length, @Width, @SaleStartDate, @SaleEndDate, @SalePrice, @StockQuantity, @LowThreshold, @HighThreshold, @DeliveryTime, @PurchasePrice, @RoleID)
 	SELECT SCOPE_IDENTITY()
 
 GO
@@ -106,10 +282,7 @@ CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Products_GetAlsoBoughtPro
 				HighThreshold,
 				DeliveryTime,
 				PurchasePrice,
-				RoleID,
-				Virtual,
-				VirtualFileID,
-				AllowedDownloads
+				RoleID
 			FROM {databaseOwner}{objectQualifier}Store_Products p
 			INNER JOIN @ABProducts abp ON p.ProductID = abp.ProductID
 			WHERE p.IsDeleted = 0
@@ -146,10 +319,7 @@ CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Products_GetAlsoBoughtPro
 				HighThreshold,
 				DeliveryTime,
 				PurchasePrice,
-				RoleID,
-				Virtual,
-				VirtualFileID,
-				AllowedDownloads
+				RoleID
 			FROM {databaseOwner}{objectQualifier}Store_Products p
 			INNER JOIN @ABProducts abp ON p.ProductID = abp.ProductID
 			WHERE p.Archived = 0 AND p.IsDeleted = 0
@@ -164,7 +334,6 @@ DROP PROCEDURE {databaseOwner}{objectQualifier}Store_Products_GetFeaturedProduct
 GO
 
 CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Products_GetFeaturedProducts
-		@PortalID int,
 		@CategoryID int,
 		@Archived bit = 0
 	AS
@@ -201,12 +370,9 @@ CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Products_GetFeaturedProdu
 				HighThreshold,
 				DeliveryTime,
 				PurchasePrice,
-				RoleID,
-				Virtual,
-				VirtualFileID,
-				AllowedDownloads
+				RoleID
 			FROM 	{databaseOwner}{objectQualifier}Store_Products 
-			WHERE PortalID = @PortalID AND CategoryID  = @CategoryID
+			WHERE 	CategoryID  = @CategoryID
 			AND IsDeleted = 0
 			AND	Featured = 1
 			ORDER BY NEWID()
@@ -243,12 +409,9 @@ CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Products_GetFeaturedProdu
 				HighThreshold,
 				DeliveryTime,
 				PurchasePrice,
-				RoleID,
-				Virtual,
-				VirtualFileID,
-				AllowedDownloads
+				RoleID
 			FROM 	{databaseOwner}{objectQualifier}Store_Products 
-			WHERE PortalID = @PortalID AND CategoryID  = @CategoryID
+			WHERE 	CategoryID  = @CategoryID
 			AND	Featured = 1
 			AND 	Archived = 0
 			AND IsDeleted = 0
@@ -263,7 +426,6 @@ DROP PROCEDURE {databaseOwner}{objectQualifier}Store_Products_GetNewProducts
 GO
 
 CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Products_GetNewProducts
-		@PortalID int,
 		@CategoryID int,
 		@Archived bit = 0
 	AS
@@ -300,12 +462,9 @@ CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Products_GetNewProducts
 				HighThreshold,
 				DeliveryTime,
 				PurchasePrice,
-				RoleID,
-				Virtual,
-				VirtualFileID,
-				AllowedDownloads
+				RoleID
 			FROM 	{databaseOwner}{objectQualifier}Store_Products 
-			WHERE PortalID = @PortalID AND CategoryID  = @CategoryID
+			WHERE 	CategoryID  = @CategoryID
 			AND IsDeleted = 0
 			ORDER BY CreatedDate DESC
 		END
@@ -340,12 +499,9 @@ CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Products_GetNewProducts
 				HighThreshold,
 				DeliveryTime,
 				PurchasePrice,
-				RoleID,
-				Virtual,
-				VirtualFileID,
-				AllowedDownloads
+				RoleID
 			FROM 	{databaseOwner}{objectQualifier}Store_Products 
-			WHERE PortalID = @PortalID AND CategoryID  = @CategoryID
+			WHERE 	CategoryID  = @CategoryID
 			AND 	Archived = 0
 			AND IsDeleted = 0
 			ORDER BY CreatedDate DESC
@@ -411,12 +567,9 @@ CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Products_GetPopularProduc
 				HighThreshold,
 				DeliveryTime,
 				PurchasePrice,
-				RoleID,
-				Virtual,
-				VirtualFileID,
-				AllowedDownloads
+				RoleID
 			FROM {databaseOwner}{objectQualifier}Store_Products p, @Products op
-			WHERE p.PortalID = @PortalID AND p.ProductID = op.ProductID
+			WHERE p.ProductID = op.ProductID
 				AND p.CategoryID = @CategoryID
 				AND IsDeleted = 0
 			ORDER BY op.Quantity DESC
@@ -453,12 +606,9 @@ CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Products_GetPopularProduc
 				HighThreshold,
 				DeliveryTime,
 				PurchasePrice,
-				RoleID,
-				Virtual,
-				VirtualFileID,
-				AllowedDownloads
+				RoleID
 			FROM {databaseOwner}{objectQualifier}Store_Products p, @Products op
-			WHERE p.PortalID = @PortalID AND p.ProductID = op.ProductID
+			WHERE p.ProductID = op.ProductID
 			AND p.CategoryID  = @CategoryID
 			AND Archived = 0
 			AND IsDeleted = 0
@@ -475,7 +625,6 @@ GO
 CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Products_GetPortalAllProducts
 		@PortalID int
 	AS
-	SET NOCOUNT ON
 	
 	SELECT
 		ProductID,
@@ -506,10 +655,7 @@ CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Products_GetPortalAllProd
 		HighThreshold,
 		DeliveryTime,
 		PurchasePrice,
-		RoleID,
-		Virtual,
-		VirtualFileID,
-		AllowedDownloads
+		RoleID
 	FROM {databaseOwner}{objectQualifier}Store_Products 
 	WHERE PortalID = @PortalID
 	AND IsDeleted = 0
@@ -557,10 +703,7 @@ CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Products_GetPortalFeature
 			HighThreshold,
 			DeliveryTime,
 			PurchasePrice,
-			RoleID,
-			Virtual,
-			VirtualFileID,
-			AllowedDownloads
+			RoleID
 		FROM 	{databaseOwner}{objectQualifier}Store_Products 
 		WHERE 	PortalID = @PortalID
 		AND	Featured = 1
@@ -596,10 +739,7 @@ CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Products_GetPortalFeature
 			HighThreshold,
 			DeliveryTime,
 			PurchasePrice,
-			RoleID,
-			Virtual,
-			VirtualFileID,
-			AllowedDownloads
+			RoleID
 		FROM 	{databaseOwner}{objectQualifier}Store_Products 
 		WHERE 	PortalID = @PortalID
 		AND	Featured = 1
@@ -617,7 +757,6 @@ GO
 CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Products_GetPortalLowStockProducts
 		@PortalID int
 	AS
-	SET NOCOUNT ON
 	
 	SELECT
 		ProductID,
@@ -648,10 +787,7 @@ CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Products_GetPortalLowStoc
 		HighThreshold,
 		DeliveryTime,
 		PurchasePrice,
-		RoleID,
-		Virtual,
-		VirtualFileID,
-		AllowedDownloads
+		RoleID
 	FROM {databaseOwner}{objectQualifier}Store_Products 
 	WHERE PortalID = @PortalID
 	AND IsDeleted = 0
@@ -700,10 +836,7 @@ CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Products_GetPortalNewProd
 			HighThreshold,
 			DeliveryTime,
 			PurchasePrice,
-			RoleID,
-			Virtual,
-			VirtualFileID,
-			AllowedDownloads
+			RoleID
 		FROM 	{databaseOwner}{objectQualifier}Store_Products 
 		WHERE 	PortalID = @PortalID
 		AND IsDeleted = 0
@@ -738,10 +871,7 @@ CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Products_GetPortalNewProd
 			HighThreshold,
 			DeliveryTime,
 			PurchasePrice,
-			RoleID,
-			Virtual,
-			VirtualFileID,
-			AllowedDownloads
+			RoleID
 		FROM 	{databaseOwner}{objectQualifier}Store_Products 
 		WHERE 	PortalID = @PortalID
 		AND 	Archived = 0
@@ -758,7 +888,6 @@ GO
 CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Products_GetPortalOutOfStockProducts
 		@PortalID int
 	AS
-	SET NOCOUNT ON
 	
 	SELECT
 		ProductID,
@@ -789,10 +918,7 @@ CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Products_GetPortalOutOfSt
 		HighThreshold,
 		DeliveryTime,
 		PurchasePrice,
-		RoleID,
-		Virtual,
-		VirtualFileID,
-		AllowedDownloads
+		RoleID
 	FROM {databaseOwner}{objectQualifier}Store_Products 
 	WHERE PortalID = @PortalID
 	AND IsDeleted = 0
@@ -856,12 +982,9 @@ CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Products_GetPortalPopular
 			HighThreshold,
 			DeliveryTime,
 			PurchasePrice,
-			RoleID,
-			Virtual,
-			VirtualFileID,
-			AllowedDownloads
+			RoleID
 		FROM {databaseOwner}{objectQualifier}Store_Products p, @Products op
-		WHERE p.PortalID = @PortalID AND p.ProductID = op.ProductID
+		WHERE p.ProductID = op.ProductID
 		AND IsDeleted = 0
 		ORDER BY op.Quantity DESC
 	ELSE
@@ -895,12 +1018,9 @@ CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Products_GetPortalPopular
 			HighThreshold,
 			DeliveryTime,
 			PurchasePrice,
-			RoleID,
-			Virtual,
-			VirtualFileID,
-			AllowedDownloads
+			RoleID
 		FROM {databaseOwner}{objectQualifier}Store_Products p, @Products op
-		WHERE p.PortalID = @PortalID AND p.ProductID = op.ProductID
+		WHERE p.ProductID = op.ProductID
 		AND Archived = 0
 		AND IsDeleted = 0
 		ORDER BY op.Quantity DESC
@@ -917,7 +1037,6 @@ CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Products_GetPortalProduct
 		@Featured bit = 0,
 		@Archived bit = 0
 	AS
-	SET NOCOUNT ON
 	
 	SELECT
 		ProductID,
@@ -948,10 +1067,7 @@ CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Products_GetPortalProduct
 		HighThreshold,
 		DeliveryTime,
 		PurchasePrice,
-		RoleID,
-		Virtual,
-		VirtualFileID,
-		AllowedDownloads
+		RoleID
 	FROM {databaseOwner}{objectQualifier}Store_Products 
 	WHERE PortalID = @PortalID
 	AND Featured = @Featured
@@ -969,7 +1085,6 @@ CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Products_GetProduct
 		@PortalID int,
 		@ProductID int
 	AS
-	SET NOCOUNT ON
 	SELECT
 		ProductID,
 		PortalID,
@@ -999,10 +1114,7 @@ CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Products_GetProduct
 		HighThreshold,
 		DeliveryTime,
 		PurchasePrice,
-		RoleID,
-		Virtual,
-		VirtualFileID,
-		AllowedDownloads
+		RoleID
 	FROM {databaseOwner}{objectQualifier}Store_Products 
 	WHERE PortalID = @PortalID AND ProductID = @ProductID AND IsDeleted = 0
 GO
@@ -1014,13 +1126,11 @@ DROP PROCEDURE {databaseOwner}{objectQualifier}Store_Products_GetProducts
 GO
 
 CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Products_GetProducts
-		@PortalID int,
 		@CategoryID int,
 		@Archived bit = 0,
 		@SortOrder int,
 		@SortDir varchar(4)
 	AS
-	SET NOCOUNT ON
 	
 	IF @Archived = 1
 		BEGIN
@@ -1053,12 +1163,9 @@ CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Products_GetProducts
 				HighThreshold,
 				DeliveryTime,
 				PurchasePrice,
-				RoleID,
-				Virtual,
-				VirtualFileID,
-				AllowedDownloads
+				RoleID
 			FROM 	{databaseOwner}{objectQualifier}Store_Products 
-			WHERE PortalID = @PortalID AND CategoryID  = @CategoryID
+			WHERE 	CategoryID  = @CategoryID
 			AND IsDeleted = 0
 			Order By
 				Case @SortDir When 'ASC' Then
@@ -1117,12 +1224,9 @@ CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Products_GetProducts
 				HighThreshold,
 				DeliveryTime,
 				PurchasePrice,
-				RoleID,
-				Virtual,
-				VirtualFileID,
-				AllowedDownloads
+				RoleID
 			FROM 	{databaseOwner}{objectQualifier}Store_Products 
-			WHERE PortalID = @PortalID AND CategoryID  = @CategoryID
+			WHERE CategoryID  = @CategoryID
 			AND Archived = 0	
 			AND IsDeleted = 0
 			Order By
@@ -1166,7 +1270,6 @@ CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Products_GetSearchedProdu
 		@SortOrder int,
 		@SortDir varchar(4)
 	AS
-	SET NOCOUNT ON
 		SELECT
 			ProductID,
 			PortalID,
@@ -1196,10 +1299,7 @@ CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Products_GetSearchedProdu
 			HighThreshold,
 			DeliveryTime,
 			PurchasePrice,
-			RoleID,
-			Virtual,
-			VirtualFileID,
-			AllowedDownloads
+			RoleID
 		FROM 	{databaseOwner}{objectQualifier}Store_Products 
 		WHERE 	PortalID  = @PortalID
 		AND Archived = 0	
@@ -1272,13 +1372,45 @@ CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Products_UpdateProduct
 		@HighThreshold int,
 		@DeliveryTime int,
 		@PurchasePrice money,
-		@RoleID int,
-		@Virtual bit,
-		@VirtualFileID int,
-		@AllowedDownloads int
+		@RoleID int
 
 	AS
 	SET NOCOUNT ON
+
+	IF @Weight < 0
+	BEGIN
+		SET @Weight = NULL
+	END
+
+	IF @Height < 0
+	BEGIN
+		SET @Height = NULL
+	END
+
+	IF @Length < 0
+	BEGIN
+		SET @Length = NULL
+	END
+
+	IF @Width < 0
+	BEGIN
+		SET @Width = NULL
+	END
+
+	IF @SalePrice < 0
+	BEGIN
+		SET @SalePrice = NULL
+	END
+
+	IF @SaleStartDate = '01/01/9999'
+	BEGIN
+		SET @SaleStartDate = NULL
+	END
+
+	IF @SaleEndDate = '01/01/9999'
+	BEGIN
+		SET @SaleEndDate = NULL
+	END
 
 	UPDATE {databaseOwner}{objectQualifier}Store_Products SET 
 		CategoryID	= @CategoryID,
@@ -1305,273 +1437,15 @@ CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Products_UpdateProduct
 		HighThreshold	= @HighThreshold,
 		DeliveryTime	= @DeliveryTime,
 		PurchasePrice	= @PurchasePrice,
-		RoleID		= @RoleID,
-		Virtual		= @Virtual,
-		VirtualFileID	= @VirtualFileID,
-		AllowedDownloads = @AllowedDownloads
+		RoleID		= @RoleID
 	WHERE
 		ProductID = @ProductID
 GO
 
-IF NOT EXISTS (SELECT sc.[object_id] FROM sys.objects so INNER JOIN sys.columns sc ON so.[object_id]=sc.[object_id] WHERE so.[name]=N'{objectQualifier}Store_OrderDetails' AND sc.[name]=N'Downloads')
+-- *** Add InventoryManagement field ***
+IF NOT EXISTS (SELECT sc.[object_id] FROM sys.objects so INNER JOIN sys.columns sc ON so.[object_id]=sc.[object_id] WHERE so.[name]=N'{objectQualifier}Store_Administration' AND sc.[name]=N'InventoryManagement')
 
-ALTER TABLE {databaseOwner}{objectQualifier}Store_OrderDetails ADD Downloads int NULL;
-GO
-
-IF EXISTS (SELECT object_id FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Store_Orders_GetOrderDetails]') and OBJECTPROPERTY([object_id], N'IsProcedure') = 1)
-
-DROP PROCEDURE {databaseOwner}{objectQualifier}Store_Orders_GetOrderDetails
-
-GO
-
-CREATE Procedure {databaseOwner}{objectQualifier}Store_Orders_GetOrderDetails
-	@OrderID    int
-	AS
-	SET NOCOUNT ON
-	SELECT
-		od.OrderDetailID,
-		od.OrderID,
-		p.ProductID, 
-		ISNULL(p.ModelNumber, '') AS ModelNumber,
-		ISNULL(p.ModelName, '') AS ModelName,
-		ISNULL(od.Quantity, 0) AS Quantity,
-		ISNULL(od.UnitCost, 0) AS UnitCost,
-		(ISNULL(od.Quantity, 0) * (ISNULL(od.UnitCost, 0))) as ExtendedAmount,
-		od.RoleID,
-		od.Downloads
-	FROM
-		{databaseOwner}{objectQualifier}Store_OrderDetails od
-		INNER JOIN {databaseOwner}{objectQualifier}Store_Products p ON od.ProductID = p.ProductID
-	WHERE
-		od.OrderID = @OrderID
-GO
-
-IF EXISTS (SELECT object_id FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Store_Orders_UpdateOrderDetail]') and OBJECTPROPERTY([object_id], N'IsProcedure') = 1)
-
-DROP PROCEDURE {databaseOwner}{objectQualifier}Store_Orders_UpdateOrderDetail
-
-GO
-
-CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Orders_UpdateOrderDetail
-		@OrderDetailID int,
-		@OrderID int,
-		@ProductID int,
-		@Quantity int,
-		@UnitCost money,
-		@RoleID int,
-		@Downloads int
-        AS
-	SET NOCOUNT ON
-
-	UPDATE {databaseOwner}{objectQualifier}Store_OrderDetails
-	SET
-		OrderID = @OrderID,
-		ProductID = @ProductID,
-		Quantity = @Quantity,
-		UnitCost = @UnitCost,
-		RoleID = @RoleID,
-		Downloads = @Downloads
-	WHERE OrderDetailID = @OrderDetailID
-
-GO
-
-IF EXISTS (SELECT object_id FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Store_Orders_GetOrderDetail]') and OBJECTPROPERTY([object_id], N'IsProcedure') = 1)
-
-DROP PROCEDURE {databaseOwner}{objectQualifier}Store_Orders_GetOrderDetail
-
-GO
-
-CREATE Procedure {databaseOwner}{objectQualifier}Store_Orders_GetOrderDetail
-	@OrderDetailID    int
-	AS
-	SET NOCOUNT ON
-	SELECT
-		od.OrderDetailID,
-		od.OrderID,
-		p.ProductID, 
-		ISNULL(p.ModelNumber, '') AS ModelNumber,
-		ISNULL(p.ModelName, '') AS ModelName,
-		ISNULL(od.Quantity, 0) AS Quantity,
-		ISNULL(od.UnitCost, 0) AS UnitCost,
-		(ISNULL(od.Quantity, 0) * (ISNULL(od.UnitCost, 0))) as ExtendedAmount,
-		od.RoleID,
-		od.Downloads
-	FROM
-		{databaseOwner}{objectQualifier}Store_OrderDetails od
-		INNER JOIN {databaseOwner}{objectQualifier}Store_Products p ON od.ProductID = p.ProductID
-	WHERE   
-		od.OrderDetailID = @OrderDetailID
-GO
-
-IF EXISTS (SELECT object_id FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Store_Reviews_GetAll]') and OBJECTPROPERTY([object_id], N'IsProcedure') = 1)
-
-DROP PROCEDURE {databaseOwner}{objectQualifier}Store_Reviews_GetAll
-
-GO
-
-CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Reviews_GetAll
-	@PortalID int
-	AS
-	SET NOCOUNT ON
-	SELECT r.ReviewID, r.PortalID, r.ProductID, r.UserName, r.Rating, r.Comments, r.Authorized, r.CreatedDate, p.ModelName
-	FROM {databaseOwner}{objectQualifier}Store_Reviews r
-		LEFT JOIN {databaseOwner}{objectQualifier}Store_Products p
-			ON r.ProductID = p.ProductID
-	WHERE r.PortalID = @PortalID
-GO
-
-IF EXISTS (SELECT object_id FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Store_Reviews_GetByProduct]') and OBJECTPROPERTY([object_id], N'IsProcedure') = 1)
-
-DROP PROCEDURE {databaseOwner}{objectQualifier}Store_Reviews_GetByProduct
-
-GO
-
-CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Reviews_GetByProduct
-	@PortalID int,
-	@ProductID int
-	AS
-	SET NOCOUNT ON
-	SELECT r.ReviewID, r.PortalID, r.ProductID, r.UserName, r.Rating, r.Comments, r.Authorized, r.CreatedDate, p.ModelName
-	FROM {databaseOwner}{objectQualifier}Store_Reviews r
-		LEFT JOIN {databaseOwner}{objectQualifier}Store_Products p
-			ON r.ProductID = p.ProductID
-	WHERE r.PortalID = @PortalID
-	AND r.ProductID = @ProductID
-GO
-
-IF EXISTS (SELECT object_id FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Store_Reviews_GetReview]') and OBJECTPROPERTY([object_id], N'IsProcedure') = 1)
-
-DROP PROCEDURE {databaseOwner}{objectQualifier}Store_Reviews_GetReview
-
-GO
-
-CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Reviews_GetReview
-	@PortalID int,
-	@ReviewID int
-	AS
-	SET NOCOUNT ON
-	SELECT r.PortalID, r.ProductID, r.UserName, r.Rating, r.Comments, r.Authorized, r.CreatedDate, p.ModelName
-	FROM {databaseOwner}{objectQualifier}Store_Reviews r
-		LEFT JOIN {databaseOwner}{objectQualifier}Store_Products p
-			ON r.ProductID = p.ProductID
-	WHERE r.PortalID=@PortalID AND r.ReviewID=@ReviewID
-GO
-
-IF EXISTS (SELECT object_id FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Store_Orders_GetDownloads]') and OBJECTPROPERTY([object_id], N'IsProcedure') = 1)
-
-DROP PROCEDURE {databaseOwner}{objectQualifier}Store_Orders_GetDownloads
-
-GO
-
-CREATE Procedure {databaseOwner}{objectQualifier}Store_Orders_GetDownloads
-	@PortalID int,
-	@UserID int
-	AS
-	SET NOCOUNT ON
-	SELECT d.OrderDetailID, d.OrderID, d.ProductID, p.ModelNumber, p.ModelName, p.VirtualFileID, p.AllowedDownloads, d.Quantity, d.Downloads
-	FROM {databaseOwner}{objectQualifier}Store_Orders o INNER JOIN
-		{databaseOwner}{objectQualifier}Store_OrderDetails d ON o.OrderID = d.OrderID INNER JOIN
-		{databaseOwner}{objectQualifier}Store_Products p ON d.ProductID = p.ProductID
-	WHERE (o.PortalID = @PortalID) AND (o.UserID = @UserID) AND (p.Virtual = 1)
-GO
-
-IF NOT EXISTS (SELECT ModuleControlID FROM {databaseOwner}{objectQualifier}ModuleControls WHERE (ControlType = - 2) AND (ControlKey = N'STORELINKS'))
-
-INSERT INTO {databaseOwner}{objectQualifier}ModuleControls
-                      (ControlKey, ControlTitle, ControlSrc, ControlType)
-VALUES     (N'STORELINKS', N'Store - Link to cart/store page', N'DesktopModules/Store/SkinObjects/Links.ascx', - 2)
-
-GO
-
-IF NOT EXISTS (SELECT ModuleControlID FROM {databaseOwner}{objectQualifier}ModuleControls WHERE (ControlType = - 2) AND (ControlKey = N'STOREMICROCART'))
-
-INSERT INTO {databaseOwner}{objectQualifier}ModuleControls
-                      (ControlKey, ControlTitle, ControlSrc, ControlType)
-VALUES     (N'STOREMICROCART', N'Store - Micro cart', N'DesktopModules/Store/SkinObjects/MicroCart.ascx', - 2)
-
-GO
-
-IF EXISTS (SELECT object_id FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Store_Categories_GetAll]') and OBJECTPROPERTY([object_id], N'IsProcedure') = 1)
-
-DROP PROCEDURE {databaseOwner}{objectQualifier}Store_Categories_GetAll
-
-GO
-
-CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Categories_GetAll
-		@PortalID int,
-		@ParentCategoryID int = NULL
-	AS
-	SET NOCOUNT ON
-
-IF @ParentCategoryID = -3
-	BEGIN
-		SELECT CategoryID, PortalID, CategoryName, SEOName, CategoryKeywords, CategoryDescription, Message, Archived, CreatedByUser, CreatedDate, OrderID, ParentCategoryID, '' AS ParentCategoryName
-		FROM {databaseOwner}{objectQualifier}Store_Categories
-		WHERE PortalID = @PortalID
-		ORDER BY ParentCategoryID
-	END
-ELSE
-	BEGIN
-		IF @ParentCategoryID = -2
-			BEGIN
-				SELECT Categories.CategoryID, Categories.PortalID, Categories.CategoryName, Categories.SEOName, Categories.CategoryKeywords, Categories.CategoryDescription, Categories.Message, Categories.Archived, Categories.CreatedByUser, Categories.CreatedDate, Categories.OrderID, Categories.ParentCategoryID, ISNULL(Parent.CategoryName, '-') AS ParentCategoryName
-				FROM {databaseOwner}{objectQualifier}Store_Categories AS Categories
-					LEFT OUTER JOIN {databaseOwner}{objectQualifier}Store_Categories AS Parent
-					ON Categories.ParentCategoryID = Parent.CategoryID
-				WHERE Categories.PortalID = @PortalID
-					AND Categories.ParentCategoryID IS NULL
-					AND Categories.Archived = 0
-					AND Categories.IsDeleted = 0
-				ORDER BY Categories.OrderID
-			END
-		ELSE IF @ParentCategoryID = -1
-			BEGIN
-				SELECT Categories.CategoryID, Categories.PortalID, Categories.CategoryName, Categories.SEOName, Categories.CategoryKeywords, Categories.CategoryDescription, Categories.Message, Categories.Archived, Categories.CreatedByUser, Categories.CreatedDate, Categories.OrderID, Categories.ParentCategoryID, ISNULL(Parent.CategoryName, '-') AS ParentCategoryName
-				FROM {databaseOwner}{objectQualifier}Store_Categories AS Categories
-					LEFT OUTER JOIN {databaseOwner}{objectQualifier}Store_Categories AS Parent
-					ON Categories.ParentCategoryID = Parent.CategoryID
-				WHERE Categories.PortalID = @PortalID
-					AND Categories.IsDeleted = 0
-				ORDER BY Categories.OrderID
-			END 
-		ELSE
-			BEGIN
-				SELECT Categories.CategoryID, Categories.PortalID, Categories.CategoryName, Categories.SEOName, Categories.CategoryKeywords, Categories.CategoryDescription, Categories.Message, Categories.Archived, Categories.CreatedByUser, Categories.CreatedDate, Categories.OrderID, Categories.ParentCategoryID, ISNULL(Parent.CategoryName, '-') AS ParentCategoryName
-				FROM {databaseOwner}{objectQualifier}Store_Categories AS Categories
-					LEFT OUTER JOIN {databaseOwner}{objectQualifier}Store_Categories AS Parent
-					ON Categories.ParentCategoryID = Parent.CategoryID
-				WHERE Categories.PortalID = @PortalID
-					AND Categories.ParentCategoryID = @ParentCategoryID
-					AND Categories.Archived = 0
-					AND Categories.IsDeleted = 0
-				ORDER BY Categories.OrderID
-			END
-	END
-
-GO
-
-IF EXISTS (SELECT object_id FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Store_Categories_GetCategory]') and OBJECTPROPERTY([object_id], N'IsProcedure') = 1)
-
-DROP PROCEDURE {databaseOwner}{objectQualifier}Store_Categories_GetCategory
-
-GO
-
-CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Categories_GetCategory
-		@PortalID int,
-		@CategoryID int
-	AS
-	SET NOCOUNT ON
-	SELECT Categories.CategoryID, Categories.PortalID, Categories.CategoryName, Categories.SEOName, Categories.CategoryKeywords, Categories.CategoryDescription, Categories.Message, Categories.Archived, Categories.CreatedByUser, Categories.CreatedDate, Categories.OrderID, Categories.ParentCategoryID, ISNULL(Parent.CategoryName,'-') AS ParentCategoryName
-	FROM {databaseOwner}{objectQualifier}Store_Categories AS Categories
-		LEFT OUTER JOIN {databaseOwner}{objectQualifier}Store_Categories AS Parent
-		ON Categories.ParentCategoryID = Parent.CategoryID
-	WHERE Categories.PortalID = @PortalID AND Categories.CategoryID = @CategoryID
-		AND Categories.IsDeleted = 0
-GO
-
-IF NOT EXISTS (SELECT sc.[object_id] FROM sys.objects so INNER JOIN sys.columns sc ON so.[object_id]=sc.[object_id] WHERE so.[name]=N'{objectQualifier}Store_Administration' AND sc.[name]=N'AllowVirtualProducts')
-
-ALTER TABLE {databaseOwner}{objectQualifier}Store_Administration ADD AllowVirtualProducts bit DEFAULT(0) NOT NULL;
+ALTER TABLE {databaseOwner}{objectQualifier}Store_Administration ADD InventoryManagement bit DEFAULT(1) NOT NULL;
 
 GO
 
@@ -1600,22 +1474,17 @@ CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Administration_AddStoreIn
 		@InventoryManagement bit,
 		@OutOfStock int,
 		@ProductsBehavior int,
-		@AvoidNegativeStock bit,
 		@OrderRoleID int,
 		@CatalogRoleID int,
 		@SecureCookie bit,
 		@CheckoutMode int,
-		@ImpersonatedUserID int,
-		@AllowVirtualProducts bit,
-		@TaxName nvarchar(100),
-		@ShippingName nvarchar(100),
-		@AddressName nvarchar(100)
+		@ImpersonatedUserID int
 	AS
 	SET NOCOUNT ON
 	INSERT INTO {databaseOwner}{objectQualifier}Store_Administration
-		(PortalID, [Name], [Description], Keywords, SEOFeature, GatewayName, GatewaySettings, DefaultEmailAddress, ShoppingCartPageID, CreatedByUser, CreatedDate, StorePageID, CurrencySymbol, PortalTemplates, StyleSheet, AuthorizeCancel, InventoryManagement, OutOfStock, ProductsBehavior, OrderRoleID, CatalogRoleID, SecureCookie, CheckoutMode, ImpersonatedUserID, AllowVirtualProducts, AvoidNegativeStock, TaxName, ShippingName, AddressName)
+		(PortalID, [Name], [Description], Keywords, SEOFeature, GatewayName, GatewaySettings, DefaultEmailAddress, ShoppingCartPageID, CreatedByUser, CreatedDate, StorePageID, CurrencySymbol, PortalTemplates, StyleSheet, AuthorizeCancel, InventoryManagement, OutOfStock, ProductsBehavior, OrderRoleID, CatalogRoleID, SecureCookie, CheckoutMode, ImpersonatedUserID)
 	VALUES
-		(@PortalID, @Name, @Description, @Keywords, @SEOFeature, @GatewayName, @GatewaySettings, @DefaultEmailAddress, @ShoppingCartPageID, @CreatedByUser, getdate(), @StorePageID, @CurrencySymbol, @PortalTemplates, @StyleSheet, @AuthorizeCancel, @InventoryManagement, @OutOfStock, @ProductsBehavior, @OrderRoleID, @CatalogRoleID, @SecureCookie, @CheckoutMode, @ImpersonatedUserID, @AllowVirtualProducts, @AvoidNegativeStock, @TaxName, @ShippingName, @AddressName)
+		(@PortalID, @Name, @Description, @Keywords, @SEOFeature, @GatewayName, @GatewaySettings, @DefaultEmailAddress, @ShoppingCartPageID, @CreatedByUser, getdate(), @StorePageID, @CurrencySymbol, @PortalTemplates, @StyleSheet, @AuthorizeCancel, @InventoryManagement, @OutOfStock, @ProductsBehavior, @OrderRoleID, @CatalogRoleID, @SecureCookie, @CheckoutMode, @ImpersonatedUserID)
 GO
 
 IF EXISTS (SELECT object_id FROM sys.objects WHERE object_id = OBJECT_ID(N'{databaseOwner}[{objectQualifier}Store_Administration_GetStoreInfo]') and OBJECTPROPERTY([object_id], N'IsProcedure') = 1)
@@ -1628,7 +1497,7 @@ CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Administration_GetStoreIn
 		@PortalID int
 	AS
 	SET NOCOUNT ON
-	SELECT PortalID, [Name], [Description], Keywords, SEOFeature, GatewayName, GatewaySettings, DefaultEmailAddress, ShoppingCartPageID, CreatedByUser, CreatedDate, StorePageID, CurrencySymbol, PortalTemplates, StyleSheet, AuthorizeCancel, InventoryManagement, OutOfStock, ProductsBehavior, AvoidNegativeStock, OrderRoleID, CatalogRoleID, SecureCookie, CheckoutMode, ImpersonatedUserID, AllowVirtualProducts, TaxName, ShippingName, AddressName
+	SELECT PortalID, [Name], [Description], Keywords, SEOFeature, GatewayName, GatewaySettings, DefaultEmailAddress, ShoppingCartPageID, CreatedByUser, CreatedDate, StorePageID, CurrencySymbol, PortalTemplates, StyleSheet, AuthorizeCancel, InventoryManagement, OutOfStock, ProductsBehavior, OrderRoleID, CatalogRoleID, SecureCookie, CheckoutMode, ImpersonatedUserID
 	FROM 	{databaseOwner}{objectQualifier}Store_Administration
 	WHERE	PortalID = @PortalID
 GO
@@ -1657,16 +1526,11 @@ CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Administration_UpdateStor
 		@InventoryManagement bit,
 		@OutOfStock int,
 		@ProductsBehavior int,
-		@AvoidNegativeStock bit,
 		@OrderRoleID int,
 		@CatalogRoleID int,
 		@SecureCookie bit,
 		@CheckoutMode int,
-		@ImpersonatedUserID int,
-		@AllowVirtualProducts bit,
-		@TaxName nvarchar(100),
-		@ShippingName nvarchar(100),
-		@AddressName nvarchar(100)
+		@ImpersonatedUserID int
 	AS
 	SET NOCOUNT ON
 	UPDATE 	{databaseOwner}{objectQualifier}Store_Administration 
@@ -1690,11 +1554,6 @@ CREATE PROCEDURE {databaseOwner}{objectQualifier}Store_Administration_UpdateStor
 		CatalogRoleID = @CatalogRoleID,
 		SecureCookie = @SecureCookie,
 		CheckoutMode = @CheckoutMode,
-		ImpersonatedUserID = @ImpersonatedUserID,
-		AllowVirtualProducts = @AllowVirtualProducts,
-		AvoidNegativeStock = @AvoidNegativeStock,
-		TaxName = @TaxName,
-		ShippingName = @ShippingName,
-		AddressName = @AddressName
+		ImpersonatedUserID = @ImpersonatedUserID
 	WHERE	PortalID = @PortalID
 GO

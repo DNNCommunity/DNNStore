@@ -21,6 +21,10 @@
 bld/
 [Bb]in/
 [Oo]bj/
+[Ss]tore_[Ii]nstall
+[Ss]tore_[Ss]ource
+[Pp]ackage
+[Ii]nstall
 
 # Visual Studio 2015 cache/options directory
 .vs/

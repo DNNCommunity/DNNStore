@@ -1,8 +1,8 @@
-IF NOT EXISTS (SELECT sc.[id] FROM {databaseOwner}[sysobjects] so INNER JOIN {databaseOwner}[syscolumns] sc ON so.[id]=sc.[id] WHERE so.[name]=N'{objectQualifier}Store_ShippingRates' AND sc.[name]=N'ApplyTaxRate')
+IF NOT EXISTS (SELECT sc.[object_id] FROM sys.objects so INNER JOIN sys.columns sc ON so.[object_id]=sc.[object_id] WHERE so.[name]=N'{objectQualifier}Store_ShippingRates' AND sc.[name]=N'ApplyTaxRate')
 ALTER TABLE {databaseOwner}[{objectQualifier}Store_ShippingRates] ADD ApplyTaxRate bit NOT NULL CONSTRAINT DF_{objectQualifier}Store_ShippingRates_ApplyTaxRate DEFAULT (1);
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_ShippingRates_AddShippingRate]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_ShippingRates_AddShippingRate]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_ShippingRates_AddShippingRate]
 GO
 
@@ -22,7 +22,7 @@ BEGIN
 END
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_ShippingRates_GetShippingRate]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_ShippingRates_GetShippingRate]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_ShippingRates_GetShippingRate]
 GO
 
@@ -36,7 +36,7 @@ BEGIN
 END
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_ShippingRates_GetShippingRates]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_ShippingRates_GetShippingRates]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_ShippingRates_GetShippingRates]
 GO
 
@@ -69,7 +69,7 @@ BEGIN
 END
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_ShippingRates_UpdateShippingRate]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_ShippingRates_UpdateShippingRate]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_ShippingRates_UpdateShippingRate]
 GO
 

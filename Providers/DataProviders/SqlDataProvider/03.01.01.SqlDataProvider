@@ -1,8 +1,8 @@
-IF NOT EXISTS (SELECT sc.[id] FROM {databaseOwner}[sysobjects] so INNER JOIN {databaseOwner}[syscolumns] sc ON so.[id]=sc.[id] WHERE so.[name]=N'{objectQualifier}Store_Administration' AND sc.[name]=N'DefaultAddressSettings')
+IF NOT EXISTS (SELECT sc.[object_id] FROM sys.objects so INNER JOIN sys.columns sc ON so.[object_id]=sc.[object_id] WHERE so.[name]=N'{objectQualifier}Store_Administration' AND sc.[name]=N'DefaultAddressSettings')
 ALTER TABLE {databaseOwner}[{objectQualifier}Store_Administration] ADD DefaultAddressSettings ntext NULL;
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Administration_GetAddressSettings]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Administration_GetAddressSettings]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Administration_GetAddressSettings]
 GO
 
@@ -15,7 +15,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Store_Administration_GetAddres
 	WHERE	PortalID = @PortalID
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Administration_UpdateAddressSettings]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Administration_UpdateAddressSettings]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Administration_UpdateAddressSettings]
 GO
 
@@ -30,7 +30,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Store_Administration_UpdateAdd
 	WHERE	PortalID = @PortalID
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Products_GetProducts]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Products_GetProducts]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Products_GetProducts]
 GO
 

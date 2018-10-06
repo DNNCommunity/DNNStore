@@ -1,4 +1,4 @@
-IF NOT EXISTS (SELECT sc.[id] FROM {databaseOwner}[sysobjects] so INNER JOIN {databaseOwner}[syscolumns] sc ON so.[id]=sc.[id] WHERE so.[name]=N'{objectQualifier}Store_Administration' AND sc.[name]=N'AllowFreeShipping')
+IF NOT EXISTS (SELECT sc.[object_id] FROM sys.objects so INNER JOIN sys.columns sc ON so.[object_id]=sc.[object_id] WHERE so.[name]=N'{objectQualifier}Store_Administration' AND sc.[name]=N'AllowFreeShipping')
 ALTER TABLE {databaseOwner}[{objectQualifier}Store_Administration] ADD
 	AllowFreeShipping bit NOT NULL CONSTRAINT DF_{objectQualifier}Store_Administration_AllowFreeShipping DEFAULT 0,
 	MinOrderAmount money NULL,
@@ -7,7 +7,7 @@ ALTER TABLE {databaseOwner}[{objectQualifier}Store_Administration] ADD
 	OnOrderPaidRoleID int NOT NULL CONSTRAINT DF_{objectQualifier}Store_Administration_OnOrderPaidRoleID DEFAULT -1
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Administration_AddStoreInfo]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Administration_AddStoreInfo]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Administration_AddStoreInfo]
 GO
 
@@ -56,7 +56,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Store_Administration_AddStoreI
 		(@PortalID, @Name, @Description, @Keywords, @SEOFeature, @GatewayName, @GatewaySettings, @DefaultEmailAddress, @ShoppingCartPageID, @CreatedByUser, getdate(), @StorePageID, @CurrencySymbol, @PortalTemplates, @StyleSheet, @AuthorizeCancel, @InventoryManagement, @OutOfStock, @ProductsBehavior, @OrderRoleID, @CatalogRoleID, @SecureCookie, @CheckoutMode, @ImpersonatedUserID, @NoDelivery, @AllowVirtualProducts, @AvoidNegativeStock, @AllowCoupons, @AllowFreeShipping, @MinOrderAmount, @RestrictToCountries, @AuthorizedCountries, @OnOrderPaidRoleID, @TaxName, @ShippingName, @AddressName)
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Administration_GetStoreInfo]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Administration_GetStoreInfo]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Administration_GetStoreInfo]
 GO
 
@@ -69,7 +69,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Store_Administration_GetStoreI
 	WHERE	PortalID = @PortalID
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Administration_UpdateStoreInfo]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Administration_UpdateStoreInfo]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Administration_UpdateStoreInfo]
 GO
 
