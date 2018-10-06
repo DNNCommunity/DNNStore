@@ -25,6 +25,7 @@
       <Output TaskParameter="Include" ItemName="ResourcesContent" />
     </CreateItem>
     <Copy DestinationFolder="..\Store_Install" SourceFiles="..\$(DNNFileName).dnn" />
+    <Sleep Milliseconds="2000" />
     <Zip Files="@(ResourcesContent)" WorkingDirectory="$(MSBuildProjectDirectory)\..\Store_Install" ZipFileName="$(DNNFileName)_$(Version)_Install.zip" />
     <Copy DestinationFolder="..\Install" SourceFiles="$(DNNFileName)_$(Version)_Install.zip" />
     <Delete Files="$(DNNFileName)_$(Version)_Install.zip" />

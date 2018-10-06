@@ -234,67 +234,67 @@
             <assembly>
               <path>bin</path>
               <name>DotNetNuke.Modules.Store.Core.dll</name>
-              <version>04.00.00</version>
+              <version>04.00.02</version>
             </assembly>
             <assembly>
               <path>bin</path>
               <name>DotNetNuke.Modules.Store.API.dll</name>
-              <version>04.00.00</version>
+              <version>04.00.02</version>
             </assembly>
             <assembly>
               <path>bin</path>
               <name>DotNetNuke.Modules.Store.WebControls.dll</name>
-              <version>04.00.00</version>
+              <version>04.00.02</version>
             </assembly>
             <assembly>
               <path>bin</path>
               <name>DotNetNuke.Modules.Store.SkinObjects.dll</name>
-              <version>04.00.00</version>
+              <version>04.00.02</version>
             </assembly>
             <assembly>
               <path>bin</path>
               <name>DotNetNuke.Modules.Store.Providers.Address.DefaultAddressProvider.dll</name>
-              <version>04.00.00</version>
+              <version>04.00.02</version>
             </assembly>
             <assembly>
               <path>bin</path>
               <name>DotNetNuke.Modules.Store.Providers.Tax.DefaultTaxProvider.dll</name>
-              <version>04.00.00</version>
+              <version>04.00.02</version>
             </assembly>
             <assembly>
               <path>bin</path>
               <name>DotNetNuke.Modules.Store.Providers.Tax.CountryTaxProvider.dll</name>
-              <version>04.00.00</version>
+              <version>04.00.02</version>
             </assembly>
             <assembly>
               <path>bin</path>
               <name>DotNetNuke.Modules.Store.Providers.Shipping.DefaultShippingProvider.dll</name>
-              <version>04.00.00</version>
+              <version>04.00.02</version>
             </assembly>
             <assembly>
               <path>bin</path>
               <name>DotNetNuke.Modules.Store.Core.Cart.EmailProvider.dll</name>
-              <version>04.00.00</version>
+              <version>04.00.02</version>
             </assembly>
             <assembly>
               <path>bin</path>
               <name>DotNetNuke.Modules.Store.Core.Cart.AuthorizeNetProvider.dll</name>
-              <version>04.00.00</version>
+              <version>04.00.02</version>
             </assembly>
             <assembly>
               <path>bin</path>
               <name>DotNetNuke.Modules.Store.Core.Cart.PayPalProvider.dll</name>
-              <version>04.00.00</version>
+              <version>04.00.02</version>
             </assembly>
             <assembly>
               <path>bin</path>
               <name>DotNetNuke.Modules.Store.Core.Cart.AtosProvider.dll</name>
-              <version>04.00.00</version>
+              <version>04.00.02</version>
             </assembly>
             <assembly>
               <path>bin</path>
               <name>DotNetNuke.Modules.Store.Core.Cart.SystempayProvider.dll</name>
-              <version>04.00.00</version>
+              <version>04.00.02</version>
             </assembly>
           </assemblies>
         </component>
