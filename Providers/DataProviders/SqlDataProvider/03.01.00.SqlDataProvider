@@ -1,4 +1,4 @@
-IF EXISTS (SELECT * FROM dbo.[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Administration_GetTaxRates]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE [object_id] = object_id(N'{databaseOwner}[{objectQualifier}Store_Administration_GetTaxRates]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Administration_GetTaxRates]
 GO
 
@@ -11,7 +11,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Store_Administration_GetTaxRat
 	WHERE	PortalID = @PortalID
 GO
 
-IF EXISTS (SELECT * FROM dbo.[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Administration_GetCountryTaxRates]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE [object_id] = object_id(N'{databaseOwner}[{objectQualifier}Store_Administration_GetCountryTaxRates]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Administration_GetCountryTaxRates]
 GO
 
@@ -24,7 +24,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Store_Administration_GetCountr
 	WHERE	PortalID = @PortalID
 GO
 
-IF EXISTS (SELECT * FROM dbo.[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Administration_UpdateCountryTaxRates]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE [object_id] = object_id(N'{databaseOwner}[{objectQualifier}Store_Administration_UpdateCountryTaxRates]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Administration_UpdateCountryTaxRates]
 GO
 
@@ -45,7 +45,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Store_Administration_UpdateCou
 	WHERE	PortalID = @PortalID
 GO
 
-IF EXISTS (SELECT * FROM dbo.[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Orders_GetDownloads]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE [object_id] = object_id(N'{databaseOwner}[{objectQualifier}Store_Orders_GetDownloads]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Orders_GetDownloads]
 GO
 

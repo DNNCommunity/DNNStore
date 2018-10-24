@@ -1,8 +1,8 @@
-IF NOT EXISTS (SELECT sc.[id] FROM {databaseOwner}[sysobjects] so INNER JOIN {databaseOwner}[syscolumns] sc ON so.[id]=sc.[id] WHERE so.[name]=N'{objectQualifier}Store_Products' AND sc.[name]=N'RegularPrice')
+IF NOT EXISTS (SELECT sc.[object_id] FROM sys.objects so INNER JOIN sys.columns sc ON so.[object_id]=sc.[object_id] WHERE so.[name]=N'{objectQualifier}Store_Products' AND sc.[name]=N'RegularPrice')
 ALTER TABLE {databaseOwner}{objectQualifier}Store_Products ADD RegularPrice money DEFAULT(0) NOT NULL;
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Products_AddProduct]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Products_AddProduct]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Products_AddProduct]
 GO
 
@@ -49,7 +49,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Store_Products_AddProduct]
 	SELECT SCOPE_IDENTITY()
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Products_GetAlsoBoughtProducts]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Products_GetAlsoBoughtProducts]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Products_GetAlsoBoughtProducts]
 GO
 
@@ -154,7 +154,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Store_Products_GetAlsoBoughtPr
 		END
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Products_GetFeaturedProducts]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Products_GetFeaturedProducts]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Products_GetFeaturedProducts]
 GO
 
@@ -253,7 +253,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Store_Products_GetFeaturedProd
 		END
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Products_GetNewProducts]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Products_GetNewProducts]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Products_GetNewProducts]
 GO
 
@@ -349,7 +349,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Store_Products_GetNewProducts]
 		END
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Products_GetPopularProducts]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Products_GetPopularProducts]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Products_GetPopularProducts]
 GO
 
@@ -463,7 +463,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Store_Products_GetPopularProdu
 		END
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Products_GetPortalAllProducts]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Products_GetPortalAllProducts]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Products_GetPortalAllProducts]
 GO
 
@@ -512,7 +512,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Store_Products_GetPortalAllPro
 	AND IsDeleted = 0
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Products_GetPortalFeaturedProducts]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Products_GetPortalFeaturedProducts]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Products_GetPortalFeaturedProducts]
 GO
 
@@ -605,7 +605,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Store_Products_GetPortalFeatur
 		ORDER BY NEWID()
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Products_GetPortalLowStockProducts]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Products_GetPortalLowStockProducts]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Products_GetPortalLowStockProducts]
 GO
 
@@ -655,7 +655,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Store_Products_GetPortalLowSto
 	AND StockQuantity <= LowThreshold
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Products_GetPortalNewProducts]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Products_GetPortalNewProducts]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Products_GetPortalNewProducts]
 GO
 
@@ -746,7 +746,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Store_Products_GetPortalNewPro
 		ORDER BY CreatedDate DESC
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Products_GetPortalOutOfStockProducts]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Products_GetPortalOutOfStockProducts]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Products_GetPortalOutOfStockProducts]
 GO
 
@@ -796,7 +796,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Store_Products_GetPortalOutOfS
 	AND StockQuantity < 1
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Products_GetPortalPopularProducts]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Products_GetPortalPopularProducts]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Products_GetPortalPopularProducts]
 GO
 
@@ -903,7 +903,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Store_Products_GetPortalPopula
 		ORDER BY op.Quantity DESC
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Products_GetPortalProducts]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Products_GetPortalProducts]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Products_GetPortalProducts]
 GO
 
@@ -955,7 +955,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Store_Products_GetPortalProduc
 	AND IsDeleted = 0
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Products_GetProduct]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Products_GetProduct]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Products_GetProduct]
 GO
 
@@ -1003,7 +1003,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Store_Products_GetProduct]
 	WHERE PortalID = @PortalID AND ProductID = @ProductID AND IsDeleted = 0
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Products_GetProducts]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Products_GetProducts]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Products_GetProducts]
 GO
 
@@ -1216,7 +1216,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Store_Products_GetProducts]
 		END
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Products_GetSearchedProducts]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Products_GetSearchedProducts]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Products_GetSearchedProducts]
 GO
 
@@ -1303,7 +1303,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Store_Products_GetSearchedProd
 			End DESC
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Products_UpdateProduct]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Products_UpdateProduct]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Products_UpdateProduct]
 GO
 

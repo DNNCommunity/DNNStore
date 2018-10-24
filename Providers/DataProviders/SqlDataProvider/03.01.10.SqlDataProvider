@@ -1,4 +1,4 @@
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Orders_UpdateOrderDetails]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Orders_UpdateOrderDetails]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Orders_UpdateOrderDetails]
 GO
 
@@ -54,7 +54,7 @@ CREATE PROCEDURE {databaseOwner}[{objectQualifier}Store_Orders_UpdateOrderDetail
 	HAVING o.OrderID = @OrderID
 GO
 
-IF EXISTS (SELECT * FROM {databaseOwner}[sysobjects] WHERE id = object_id(N'{databaseOwner}[{objectQualifier}Store_Orders_CountCouponUsage]') and OBJECTPROPERTY(id, N'IsProcedure') = 1)
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = object_id(N'{databaseOwner}[{objectQualifier}Store_Orders_CountCouponUsage]') and OBJECTPROPERTY(object_id, N'IsProcedure') = 1)
 DROP PROCEDURE {databaseOwner}[{objectQualifier}Store_Orders_CountCouponUsage]
 GO
 
