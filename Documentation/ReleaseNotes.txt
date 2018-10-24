@@ -1,8 +1,6 @@
-<h3>Release notes DNN Store 04.00.01</h3>
-<p>DNN Store 04.00.01 will work for any DNN version 7.4.2 and up and as been tested up to DNN 9.2.1</p>
+<h3>Release notes DNN Store 04.00.02</h3>
+<p>DNN Store 04.00.02 will work for any DNN version 7.4.2 and up and as been tested up to DNN 9.2.2</p>
 <p><strong>Bugs corrected</strong></p>
 <ul>
-    <li>Changed the CPU supported from 32bits to Any CPU in the Atos gateway provider because this seems to be no longer supported by DNN 09.02.01!</li>
+    <li>This release is only a rebuild of the build process and add some files that where missing in the source code, it should behave exactly as 04.00.01</li>
 </ul>
-<h2>IMPORTANT</h2p>
-<p>This will be the last version of the Store module. Please consider to migrate to something else for your projects. <strong>THIS MODULE IS NO LONGER SUPPORTED!</strong></p>
